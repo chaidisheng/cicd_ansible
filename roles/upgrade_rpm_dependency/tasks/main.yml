@@ -1,0 +1,79 @@
+---
+- name: Clear old download packages
+  ansible.builtin.file:
+    path: "/{{ compile_user }}/ceph_download_packages/{{ distro_name }}_{{ ansible_architecture }}"
+    state: absent
+
+- name: Mkdir download packages
+  ansible.builtin.file:
+    path: "/{{ compile_user }}/ceph_download_packages/{{ distro_name }}_{{ ansible_architecture }}"
+    state: directory
+    mode: '0755'
+    owner: "{{ compile_user }}"
+    group: "{{ compile_user }}"
+    recurse: yes
+
+- name: Download nginx packages
+  ansible.builtin.shell: >
+    dnf download --setopt=install_weak_deps=False --resolve 
+    --arch {{ ansible_architecture }},noarch 
+    nginx
+    nginx-mod-stream
+    nginx-mod-mail
+    nginx-mod-http-xslt-filter
+    nginx-mod-http-perl
+    nginx-mod-http-image-filter
+    nginx-filesystem
+    nginx-all-modules
+  args:
+    chdir: /{{ compile_user }}/ceph_download_packages/{{ distro_name }}_{{ ansible_architecture }}
+
+- name: Download ceph ansible packages for openEuler
+  ansible.builtin.shell: >
+    dnf download --setopt=install_weak_deps=False --resolve 
+    --arch {{ ansible_architecture }},noarch 
+    ansible
+    python3-ansible-runner
+  args:
+    chdir: /{{ compile_user }}/ceph_download_packages/{{ distro_name }}_{{ ansible_architecture }}
+  when: ansible_distribution.split(' ')[0] == "openEuler"
+
+- name: Download ceph dependencies packages
+  ansible.builtin.shell: >
+    dnf download --setopt=install_weak_deps=False --resolve 
+    --arch {{ ansible_architecture }},noarch 
+    gperftools-libs
+    leveldb
+    gd
+    gdisk
+    bc
+    jq
+    fmt
+    libyaml
+    mailx
+    cryptsetup
+    libargon2
+    libunwind
+    libxslt
+    mailcap
+    oniguruma
+    socat
+    xmlstarlet
+    net-snmp
+    lm_sensors
+    libwebp
+    keepalived
+    tcpdump
+    libpcap
+    smartmontools
+    python3-wheel
+    python3-pip
+    python3-pyyaml
+    python3-ruamel-yaml
+    python3-ruamel-yaml-clib
+    python3-IPy
+    python3-flask
+    resource-agents
+  args:
+    chdir: /{{ compile_user }}/ceph_download_packages/{{ distro_name }}_{{ ansible_architecture }}
+

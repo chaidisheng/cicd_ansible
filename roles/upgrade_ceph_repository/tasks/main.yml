@@ -1,0 +1,165 @@
+---
+# create ceph yum repository
+- block:
+  - name: Createrepo {{ ansible_architecture }}
+    ansible.builtin.command:
+      cmd: createrepo /{{ compile_user }}/rpmbuild/RPMS/{{ ansible_architecture }}
+
+  - name: Createrepo noarch
+    ansible.builtin.command:
+      cmd: createrepo /{{ compile_user }}/rpmbuild/RPMS/noarch
+  tags:
+    - always
+
+- name: Copy ceph build repository
+  ansible.builtin.template:
+    src: "ceph.repo.j2"
+    dest: "/etc/yum.repos.d/ceph.repo"
+    force: yes
+  tags:
+    - always
+
+- name: Dnf make cache
+  ansible.builtin.dnf:
+    update_cache: yes
+  tags:
+    - always
+
+- block:
+  - name: Download only ceph luminous packages
+    ansible.builtin.dnf:
+      name:
+        - ceph-12.2.12
+        - ceph-fuse-12.2.12
+        - rbd-fuse-12.2.12
+        - rbd-mirror-12.2.12
+        - rbd-nbd-12.2.12
+        - python3-ceph-argparse-12.2.12
+        - access_hard_disk_info
+        - ceph_disk_local
+        - FusionOS-ceph
+      state: present
+      download_only: yes
+      download_dir: "/{{ compile_user }}/ceph_download_packages/{{ distro_name }}_{{ ansible_architecture }}"
+      disable_gpg_check: yes
+      disablerepo: []
+      enablerepo:
+        - "offline_ceph_build_{{ ansible_architecture }}"
+        - "offline_ceph_build_{{ ansible_architecture }}_noarch"
+      install_weak_deps: no
+    environment:
+      DNF_ARCH: "{{ ansible_architecture }},noarch"
+    tags:
+      - luminous
+
+  - name: Download only libvirt and qemu deps luminous package
+    ansible.builtin.dnf:
+      name:
+        - librbd-devel-12.2.12
+        - librados-devel-12.2.12
+        - libcephfs-devel-12.2.12
+        - libradosstriper-devel-12.2.12
+        - librgw-devel-12.2.12
+        - rados-objclass-devel-12.2.12
+      state: present
+      download_only: yes
+      download_dir: "/{{ compile_user }}/ceph_download_packages/{{ distro_name }}_{{ ansible_architecture }}"
+      disable_gpg_check: yes
+      disablerepo: []
+      enablerepo:
+        - "offline_ceph_build_{{ ansible_architecture }}"
+        - "offline_ceph_build_{{ ansible_architecture }}_noarch"
+      install_weak_deps: no
+    environment:
+      DNF_ARCH: "{{ ansible_architecture }},noarch"
+    tags:
+      - luminous
+
+- block:
+  - name: Download only ceph pacific packages
+    ansible.builtin.shell: >
+      dnf download --setopt=install_weak_deps=False --resolve 
+      --arch {{ ansible_architecture }},noarch 
+      ceph-16.2.10
+      ceph-fuse-16.2.10
+      rbd-fuse-16.2.10
+      rbd-mirror-16.2.10
+      rbd-nbd-16.2.10
+      python3-ceph-argparse-16.2.10
+      access_hard_disk_info
+      ceph_disk_local
+      FusionOS-ceph
+    args:
+      chdir: "/{{ compile_user }}/ceph_download_packages/{{ distro_name }}_{{ ansible_architecture }}"
+    tags:
+      - pacific
+
+  - name: Download only libvirt and qemu deps pacific package
+    ansible.builtin.shell: >
+      dnf download --setopt=install_weak_deps=False --resolve 
+      --arch {{ ansible_architecture }},noarch 
+      librbd-devel-16.2.10
+      librados-devel-16.2.10
+      libcephfs-devel-16.2.10
+      libradosstriper-devel-16.2.10
+      librgw-devel-16.2.10
+      rados-objclass-devel-16.2.10
+    args:
+      chdir: "/{{ compile_user }}/ceph_download_packages/{{ distro_name }}_{{ ansible_architecture }}"
+    tags:
+      - pacific
+
+- name: Clean system high risk package
+  block:
+    - name: Find systemd and glibc packages
+      ansible.builtin.find:
+        paths: "/{{ compile_user }}/ceph_download_packages/{{ distro_name }}_{{ ansible_architecture }}/"
+        patterns:
+          - '^systemd.*'
+          - '^glibc.*'
+        file_type: file
+        use_regex: true
+      register: high_risk_packages
+    
+    - name: Print high risk packages
+      ansible.builtin.debug:
+        var: high_risk_packages.files
+
+    - name: Remove high risk packages
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      loop: "{{ high_risk_packages.files }}"
+      when: high_risk_packages.files | length > 0
+  tags:
+    - always
+
+- name: Create ceph and deps repo
+  ansible.builtin.shell: "createrepo {{ distro_name }}_{{ ansible_architecture }}"
+  args:
+    chdir: "/{{ compile_user }}/ceph_download_packages/"
+  tags:
+    - always
+
+- name: Tar ceph and deps packages
+  ansible.builtin.archive:
+    path: "/{{ compile_user }}/ceph_download_packages/{{ distro_name }}_{{ ansible_architecture }}"
+    dest: "/{{ compile_user }}/ceph_download_packages/ceph_{{ distro_name }}_{{ ansible_architecture }}.tar.gz"
+    format: gz
+  tags:
+    - always
+
+# TODO debuginfo
+#- name: dnf download ceph debuginfo
+#  ansible.builtin.dnf:
+#    name:
+#      - "{{ item }}-debuginfo"
+#    debuginfo: yes
+
+- name: Fetch ceph packages to local
+  ansible.builtin.fetch:
+    src: "/{{ compile_user }}/ceph_download_packages/ceph_{{ distro_name }}_{{ ansible_architecture }}.tar.gz"
+    dest: "{{ ceph_package_path }}/ceph-run/packet/FusionOS-ceph/"
+    flat: true
+  tags:
+    - always

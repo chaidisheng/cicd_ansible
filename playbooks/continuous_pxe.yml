@@ -1,0 +1,15 @@
+- hosts: localhost
+  any_errors_fatal: true
+  gather_facts: false
+  roles:
+    - role: choose_project
+    - role: find_newest_package
+      tags: [always]
+
+- hosts: pxe_server
+  any_errors_fatal: true
+  gather_facts: False
+  roles:
+    - role: choose_project
+    - role: set_package_to_pxe
+      tags: [always]

@@ -1,0 +1,31 @@
+---
+- hosts: localhost
+  any_errors_fatal: true
+  gather_facts: false
+  roles:
+    - role: choose_project
+    - role: find_newest_package
+      tags: [always]
+
+- hosts: kylin_x86_proxy_test
+  any_errors_fatal: true
+  gather_facts: False
+  tasks:
+    - name: basename newest_package_file
+      tags: [always]
+      ansible.builtin.set_fact:
+        newest_package_name: "{{ hostvars['localhost']['newest_package_path'] | basename }}"
+      run_once: True
+
+    - name: New push package dest directory
+      tags: [always]
+      ansible.builtin.file:
+        path: "/root/lkp"
+        state: directory
+
+    - name: Push package
+      tags: [always]
+      ansible.builtin.copy:
+        src: "{{ hostvars['localhost']['newest_package_path'] }}"
+        dest: "/root/lkp"
+        force: yes

@@ -1,0 +1,228 @@
+#安装ceph包所有的存储节点ip列表
+rpm_install:
+    #存储节点1的ip(任意可以ssh免密的都可以) 例如10.192.47.148
+  - 10.42.214.148
+    #存储节点2的ip
+  - 10.42.214.149
+  - 10.42.214.150
+
+
+#创建ceph所有配置信息
+cluster_create:
+  #集群的名字, 会默认创建出以"client."开头的同名的用户名, 如client.abc
+  cluster_name: abc
+  change_hosts_flag: true  
+  #存储节点外网所有配置 
+  public:
+  #存储节点1的外网网口,如 bond1
+  #若bond1为bond1:1,填写nic时要改成bond1_1
+    - nic: ens192
+      #存储节点1的外网ip, 如10.192.55.131
+      ip: 10.42.214.148
+      mask: 255.255.255.0
+      #存储节点的hostname,不填则不修改hostname
+      hostname: node1
+    - nic: ens192
+      ip: 10.42.214.149
+      mask: 255.255.255.0
+      #存储节点的hostname,不填则不修改hostname
+      hostname: node2
+    - nic: ens192
+      ip: 10.42.214.150
+      mask: 255.255.255.0
+      #存储节点的hostname,不填则不修改hostname
+      hostname: node3
+    # - nic: bond1
+    #   ip: 10.192.47.150
+    #   mask: 255.255.255.0
+      #存储节点的hostname,不填则不修改hostname
+      #hostname: 
+  #存储节点内网所有配置
+  cluster:
+      #存储节点1的内网网口,如 bond2
+      #若bond2为bond2:1,填写nic时要改成bond2_1
+    - nic: ens224
+      #存储节点1的内网ip,如10.193.55.131
+      ip: 10.43.214.148
+      #存储节点1的内网netmask,  如255.255.255.0
+      mask: 255.255.255.0
+      #存储节点的hostname,不填则不修改hostname
+      hostname: node1
+    - nic: ens224
+      ip: 10.43.214.149
+      mask: 255.255.255.0
+      #存储节点的hostname,不填则不修改hostname
+      hostname: node2
+    - nic: ens224
+      ip: 10.43.214.150
+      mask: 255.255.255.0
+      #存储节点的hostname,不填则不修改hostname
+      hostname: node3
+    # - nic: bond2
+    #   ip: 10.193.47.150
+    #   mask: 255.255.255.0
+      #存储节点的hostname,不填则不修改hostname
+      #hostname: 
+  #域IP信息（ip：必须是和public外网同网段,并且未使用）如10.192.47.56
+  # domain_ip: '10.42.214.147'
+  domain_ip: '10.42.214.152'
+  ms_bind:
+    - ms_bind_ipv4: true
+    - ms_bind_ipv6: false
+  openapi_public_key: "/home/hikos/system/bin/ceph-ansible/openapi_public_key"
+  
+  #是否修改logrotate.conf  false: 不修改  true: 修改(默认修改)
+  #边缘云使用不加额外配置的logrotate.conf，中心云使用系统默认的logrotate.conf，   #新增的规则都放到logrotate.d下
+  logrotate_conf_change: 'true'
+  #ntp时间校验外部服务器
+  # ntp_Synchronize_server: 
+
+  #集群节点间ntp时间间隔
+  # ntp_time_interval: 1
+
+  #ntp校时端口号
+  # ntp_time_port: 123
+  
+  #是否内外网分离部署. true：分离部署  fase: 内外网不分离 无cluster_network_mode key则进行默认配置
+  #cluster_network_mode: 
+  
+  #检查mon数据库分区 0：不做分区检测 1：检查系统卡mon分区，2：检查共享盘mon分区
+  #g5项目使用mon分区，将其设置为 1
+  #无mon_partition_flag key则选择默认
+  #mon_partition_flag: 1
+  
+  #内外网段配置
+  # public_network: 
+  # cluster_network: 
+
+  #mon ip所在的网卡
+  # mon_netcard: bond1
+
+  #clients节点列表
+  # clients:
+    # - public_ip: 10.192.47.148
+      # cluster_ip: 10.193.47.148
+      # hostname: node1 
+    # - public_ip: 10.192.47.149
+      # cluster_ip: 10.193.47.149
+      # hostname: node2 
+
+  #安装mon的节点列表
+  # mons:
+    # - public_ip: 10.192.47.148
+      # cluster_ip: 10.193.47.148
+      # hostname: node1 
+
+  #安装mgr的节点列表，输入和mons相同的节点列表
+  # mgrs:
+    # - public_ip: 10.192.47.148
+      # cluster_ip: 10.193.47.148
+      # hostname: node1
+
+#创建/扩容资源池所有配置
+pools:
+    #快速资源池的名字
+  - pool_name: pool1
+    #资源池的描述，快速资源池类型选择‘fast’
+    pool_description: fast
+    #资源池的类型，副本型选replicated
+    pool_type: replicated
+    #资源池的副本数
+    pool_size: 2
+    #资源池使用的节点（ip和cluster_create字段的public一致）
+    node_list:
+    - 10.42.214.148
+    - 10.42.214.149
+    - 10.42.214.150
+
+
+    #资源池各个节点的磁盘列表
+    device_info:
+        #存储节点1的ip,如10.192.47.148（ip和cluster_create字段的public一致）
+      - node_ip: 10.42.214.148
+        #快速资源池需要填入磁盘类型为ssd
+        device_list:
+        - sdb
+        - sdc
+        - sdd
+      - node_ip: 10.42.214.149
+        device_list:
+        - sdb
+        - sdc
+        - sdd
+      - node_ip: 10.42.214.150
+        device_list:
+        - sdb
+        - sdc
+        - sdd
+      # - node_ip: 10.192.47.150
+      #   device_list:
+      #   - sdb
+      #   - sdc
+      #   - sdd
+    # 普通资源池的名字
+  # - pool_name: pool2
+  #   #资源池的描述,普通资源池类型选择‘normal’
+  #   pool_description: fast
+  #   #资源池的类型，EC型选erasure，副本则填replicated
+  #   pool_type: replicated
+  #   #资源池的副本数(2+1)
+  #   pool_size: 3
+  #   #资源池的最小size（1.如果pool_min_size不填：pool_size大于等于3时，则            pool_min_size默认为2；pool_size小于3时，pool_min_size默认为1 
+  #   #2. pool_min_size如果填写，则按照填写的部署）
+  #   pool_min_size: 2
+
+  #   #资源池使用的节点（ip和cluster_create字段的public一致）
+  #   node_list:
+  #   - 10.192.47.148
+  #   - 10.192.47.149
+  #   - 10.192.47.150
+
+  #   #资源池各个节点的磁盘列表
+  #   device_info:
+  #     - node_ip: 10.192.47.148
+  #       #normal资源池需要填入磁盘类型为hdd + ssd
+  #       device_list:
+  #       - sde
+  #       - sdf
+  #       - sdg
+  #     - node_ip: 10.192.47.149
+  #       device_list:
+  #       - sde
+  #       - sdf
+  #       - sdg
+  #     - node_ip: 10.192.47.150
+  #       device_list:
+  #       - sde
+  #       - sdf
+  #       - sdg
+#【注】格式一定不能填错，注意对齐，“-”和“:”后都有空格
+
+#对于资源池的部署，如果要配置机柜(rack)及以上故障域，按照如下格式在配置文件中增加相关配置参数， bucket_type为指定的故障域等级, 若不部署多级故障域底下的都不写
+
+#    bucket_type: rack
+#    bucket_info:
+#    - rack: rack0    
+#      host: 10.192.47.136
+#    - rack: rack0    
+#      host: 10.192.47.137
+#    - rack: rack1    
+#      host: 10.192.47.138
+#    - rack: rack1    
+#      host: 10.192.47.139
+#    - rack: rack2    
+#      host: 10.192.47.140
+#    - rack: rack2    
+#      host: 10.192.47.141
+
+#如上多级故障域配置的实际分布
+#root
+#  rack0
+#  node(10.192.47.136)
+#  node(10.192.47.137)           
+#  rack1
+#  node(10.192.47.138)
+#  node(10.192.47.139)
+#  rack2
+#  node(10.192.47.140)
+#  node(10.192.47.141) 

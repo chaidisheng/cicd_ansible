@@ -1,0 +1,95 @@
+---
+- name: Debug hostvars['localhost']
+  ansible.builtin.debug:
+    msg:
+    - "{{ hostvars['localhost'] }}"
+
+- name: Debug newest_package_path
+  ansible.builtin.debug:
+    msg:
+    - "{{ hostvars['localhost']['newest_package_path'] }}"
+  run_once: True
+
+- name: Basename newest_package_file
+  ansible.builtin.set_fact:
+    newest_package_name: "{{ hostvars['localhost']['newest_package_path'] | basename }}"
+  run_once: True
+
+- name: Debug newest_package_path and newest_package_name
+  ansible.builtin.debug:
+    msg:
+    - "{{ hostvars['localhost']['newest_package_path'] }}"
+    - "{{ deploy_package_path }}/{{ newest_package_name }}"
+  # run_once: True
+
+- name: Clean last CICD package
+  ansible.builtin.file:
+    path: "{{ deploy_package_path }}"
+    state: absent
+  ignore_errors: True
+
+- name: debug inventory_hostname
+  ansible.builtin.debug:
+    msg: "{{ inventory_hostname  }}"
+
+- name: reset last deployed ceph
+  ansible.builtin.shell: >
+    /home/hikos/system/bin/hcli_sh ceph reset single --reset_mode normal 
+    {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}
+  ignore_errors: True
+  
+- name: Include ceph deploy dcm
+  include_vars: "{{ user_conf_path }}"
+
+- name: Debug device list
+  ansible.builtin.debug:
+    msg:
+    - "{{ pools }}"
+
+- name: sgdisk zap disk
+  ansible.builtin.shell: >
+    sgdisk --zap-all --clear --mbrtogpt /dev/{{ item }}
+  loop: "{{ pools[0].device_info[0].device_list }}"
+  ignore_errors: False
+
+- name: Delete ceph installed flag
+  ansible.builtin.file:
+    path: "/var/lib/ceph_install_packet_flag"
+    state: absent
+
+- name: Create {{ deploy_package_path }}
+  ansible.builtin.file:
+    path: "{{ deploy_package_path }}"
+    state: directory
+    recurse: True
+
+- name: Push package to node
+  ansible.builtin.copy:
+    src: "{{ hostvars['localhost']['newest_package_path'] }}"
+    dest: "{{ deploy_package_path }}/{{ newest_package_name }}"
+
+- name: Decompress package
+  ansible.builtin.unarchive:
+    src: "{{ deploy_package_path }}/{{ newest_package_name }}"
+    dest: "{{ deploy_package_path }}"
+    remote_src: yes
+
+- name: Copy user config yaml
+  ansible.builtin.copy:
+    src: "{{ user_conf_path }}"
+    dest: "{{ deploy_package_path }}/idatacloud-ceph/src/config/ceph_deploy_dcm.yaml"
+  # run_once: True
+
+- name: Copy hosts.ini
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../env_config/{{ test_host_group }}_{{ user_hosts_ini_suffix }}"
+    dest: "{{ deploy_package_path }}/idatacloud-ceph/src/inventory/hosts.ini"
+  # run_once: True
+
+- name: Deploy ceph
+  ansible.builtin.shell: > 
+    ansible-playbook playbooks/deploy.yml -i inventory/hosts.ini --extra-vars  
+    "ceph_deploy_dcm={{ deploy_package_path }}/idatacloud-ceph/src/config/ceph_deploy_dcm.yaml"
+  args:
+    chdir: "{{ deploy_package_path }}/idatacloud-ceph/src/"
+  run_once: True

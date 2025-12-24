@@ -1,0 +1,157 @@
+#安装ceph包所有的存储节点ip列表
+rpm_install:
+    #存储节点1的ip(任意可以ssh免密的都可以) 如10.192.55.131
+  - 10.42.214.104
+    #存储节点2的ip
+  - 10.42.214.105
+    #存储节点3的ip
+  - 10.42.214.106
+  
+#创建ceph所有配置信息
+cluster_create:
+  #集群的名字, 会默认创建出以"client."开头的同名的用户名, 如client.abc
+  cluster_name: abc
+  change_hosts_flag: true  
+  #存储节点外网所有配置 
+  public:
+  #存储节点1的外网网口,如 bond1
+    - nic: ens192
+      #存储节点1的外网ip, 如10.192.55.131
+      ip: 10.42.214.104
+      mask: 255.255.255.0
+      #存储节点的hostname,不填则不修改hostname
+      hostname: node1
+    
+    - nic: ens192
+      ip: 10.42.214.105
+      mask: 255.255.255.0
+      #存储节点的hostname,不填则不修改hostname
+      hostname: node2
+
+    - nic: ens192
+      #存储节点1的外网ip, 如10.192.55.131
+      ip: 10.42.214.106
+      mask: 255.255.255.0
+      #存储节点的hostname,不填则不修改hostname
+      hostname: node3
+
+
+  #存储节点内网所有配置
+  cluster:
+      #存储节点1的内网网口,如 bond2
+    - nic: ens224
+      #存储节点1的外网ip, 如10.192.55.131
+      ip: 10.42.214.104
+      mask: 255.255.254.0
+      #存储节点的hostname,不填则不修改hostname
+      hostname: node1
+    
+    - nic: ens224
+      ip: 10.42.214.105
+      mask: 255.255.254.0
+      #存储节点的hostname,不填则不修改hostname
+      hostname: node2
+
+    - nic: ens224
+      #存储节点1的外网ip, 如10.192.55.131
+      ip: 10.42.214.106
+      mask: 255.255.254.0
+      #存储节点的hostname,不填则不修改hostname
+      hostname: node2
+  #域IP信息（ip：必须是和外网同网段,并且未使用）如10.192.55.56
+  domain_ip: '10.42.214.107'
+  
+  #ntp时间校验外部服务器
+  # ntp_Synchronize_server: 
+  #集群节点间ntp时间间隔
+  # ntp_time_interval: 1
+
+  #ntp校时端口号
+  # ntp_time_port: 123
+  
+  #是否内外网分离部署. true：分离部署  fase: 内外网不分离 无cluster_network_mode key则进行默认配置
+  #cluster_network_mode: 
+  
+  #检查mon数据库分区 0：不做分区检测 1：检查系统卡mon分区，2：检查共享盘mon分区
+  #g5项目使用mon分区，将其设置为 1
+  #无mon_partition_flag key则选择默认
+  #mon_partition_flag: 1
+  
+  #内外网段配置
+  # public_network: 
+  # cluster_network: 
+
+  #mon ip所在的网卡
+  # mon_netcard: bond1
+
+  #clients节点列表
+  # clients:
+    # - public_ip: 172.110.147.2
+      # cluster_ip: 172.110.148.2
+      # hostname: node1 
+    # - public_ip: 172.110.147.4
+      # cluster_ip: 172.110.148.4
+      # hostname: node2 
+
+  #安装mon的节点列表
+  # mons:
+    # - public_ip: 172.110.147.5
+      # cluster_ip: 172.110.148.5
+      # hostname: node1 
+
+  #安装mgr的节点列表，输入和mons相同的节点列表
+  # mgrs:
+    # - public_ip: 172.110.147.5
+      # cluster_ip: 172.110.148.5
+      # hostname: node1 
+
+#创建/扩容资源池所有配置
+pools:
+    #快速资源池的名字
+  - pool_name: pool1
+    #资源池的类型，快速资源池类型选择‘fast’
+    pool_description: fast
+    pool_type: replicated
+    #资源池的副本数
+    pool_size: 2
+    # 下版本计划  故障域 层级数量
+    # 如6节点, host=3, rack=2,
+    # 对应的是一个节点下的盘进入一个host, 3个host在一个rack中,
+    # 上层提供的2副本以rack为故障域, 最多掉这一组里的3个节点.
+    # crush_map:
+    #   host: 3
+    #   rack: 2
+
+    # 下版本计划 资源池使用的节点
+    node_list:
+    - 10.42.214.104
+      #存储节点2的ip
+    - 10.42.214.105
+      #存储节点3的ip
+    - 10.42.214.106
+
+    #资源池各个节点的磁盘列表
+    device_info:
+        #存储节点1的内网ip,如10.193.55.131
+      # - node_ip: 10.42.204.54
+      #   #快速资源池需要填入磁盘类型为ssd
+      #   device_list:
+      #   - sdb
+      #   - sdc
+      #   - sdd
+      - node_ip: 10.42.214.104
+        device_list:
+        - sdb
+        - sdc
+        - sdd
+      - node_ip: 10.42.214.105
+        device_list:
+        - sdb
+        - sdc
+        - sdd
+      - node_ip: 10.42.214.106
+        device_list:
+        - sdb
+        - sdc
+        - sdd
+

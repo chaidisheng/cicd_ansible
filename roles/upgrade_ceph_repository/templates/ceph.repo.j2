@@ -1,0 +1,11 @@
+[offline_ceph_build_{{ ansible_architecture }}]
+name = offline_ceph_{{ ansible_architecture }}
+baseurl = file:///root/rpmbuild/RPMS/{{ ansible_architecture }}/
+gpgcheck = 0
+enabled = 1
+
+[offline_ceph_build_{{ ansible_architecture }}_noarch]
+name = offline_ceph_{{ ansible_architecture }}_noarch
+baseurl = file:///root/rpmbuild/RPMS/noarch/
+gpgcheck = 0
+enabled = 1

@@ -1,0 +1,7 @@
+- hosts: "{{ host_group }}"
+  gather_facts: false
+  roles:
+    - compile_ceph
+  tags:
+    - pacific
+    - luminous

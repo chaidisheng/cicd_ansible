@@ -1,0 +1,2 @@
+# Ansible role: ceph deps
+

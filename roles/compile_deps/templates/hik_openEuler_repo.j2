@@ -1,0 +1,50 @@
+#generic-repos is licensed under the Mulan PSL v2.
+#You can use this software according to the terms and conditions of the Mulan PSL v2.
+#You may obtain a copy of Mulan PSL v2 at:
+#    http://license.coscl.org.cn/MulanPSL2
+#THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR
+#PURPOSE.
+#See the Mulan PSL v2 for more details.
+
+[OS]
+name=OS
+baseurl=http://mirrors.hikvision.com.cn/openeuler/openEuler-22.03-LTS-SP4/OS/$basearch/
+enabled=1
+gpgcheck=0
+gpgkey=http://mirrors.hikvision.com.cn/openeuler/openEuler-22.03-LTS-SP4/OS/$basearch/RPM-GPG-KEY-openEuler
+
+[everything]
+name=everything
+baseurl=http://mirrors.hikvision.com.cn/openeuler/openEuler-22.03-LTS-SP4/everything/$basearch/
+enabled=1
+gpgcheck=0
+gpgkey=http://mirrors.hikvision.com.cn/openeuler/openEuler-22.03-LTS-SP4/everything/$basearch/RPM-GPG-KEY-openEuler
+
+[EPOL]
+name=EPOL
+baseurl=http://mirrors.hikvision.com.cn/openeuler/openEuler-22.03-LTS-SP4/EPOL/main/$basearch/
+enabled=1
+gpgcheck=0
+gpgkey=http://mirrors.hikvision.com.cn/openeuler/openEuler-22.03-LTS-SP4/EPOL/main/$basearch/RPM-GPG-KEY-openEuler
+
+[debuginfo]
+name=debuginfo
+baseurl=http://mirrors.hikvision.com.cn/openeuler/openEuler-22.03-LTS-SP4/debuginfo/$basearch/
+enabled=0
+gpgcheck=0
+gpgkey=http://mirrors.hikvision.com.cn/openeuler/openEuler-22.03-LTS-SP4/debuginfo/$basearch/RPM-GPG-KEY-openEuler
+
+[source]
+name=source
+baseurl=http://mirrors.hikvision.com.cn/openeuler/openEuler-22.03-LTS-SP4/source/
+enabled=1
+gpgcheck=0
+gpgkey=http://mirrors.hikvision.com.cn/openeuler/openEuler-22.03-LTS-SP4/source/RPM-GPG-KEY-openEuler
+
+[update]
+name=update
+baseurl=http://mirrors.hikvision.com.cn/openeuler/openEuler-22.03-LTS-SP4/update/$basearch/
+enabled=1
+gpgcheck=0
+gpgkey=http://mirrors.hikvision.com.cn/openeuler/openEuler-22.03-LTS-SP4/update/$basearch/RPM-GPG-KEY-openEuler

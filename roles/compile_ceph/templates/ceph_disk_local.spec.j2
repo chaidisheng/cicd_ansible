@@ -1,0 +1,29 @@
+Name:           ceph_disk_local
+Version:        1.0.0
+Release:        1%{?dist}
+Summary:        ceph C300 preinstall disk interface rpm
+Source:        %{name}-%{version}.tar.gz
+License:        commercial
+URL:            hikvision.com
+%description
+the extremely high-performance web server.
+
+%prep
+%setup -q
+
+#build
+%install
+install -m -755 -D root/ceph_disk_local.sh %{buildroot}/root/ceph_disk_local.sh
+
+%post
+
+%clean
+rm -rf %{buildroot}
+rm -rf %{_builddir}/%{name}-%{version}
+
+%files
+%defattr(-,root,root,755)
+#%{_bindir}/%{name}
+%attr(0755,root,root) /root/ceph_disk_local.sh
+
+%changelog

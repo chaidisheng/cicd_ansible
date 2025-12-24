@@ -1,0 +1,17 @@
+- hosts: "{{ host_group }}"
+  gather_facts: true
+  tasks:
+    - name: Setup distribution
+      tags: always
+      ansible.builtin.setup:
+        gather_subset:
+          - distribution
+  roles:
+    - role: choose_project
+    - role: upgrade_pip_dependency
+      tags: [always]
+    - role: upgrade_rpm_dependency
+      tags: [always]
+    - role: upgrade_ceph_repository
+  vars:
+    distro_name: "{{ (ansible_distribution.split(' ')[0] == 'openEuler') | ternary('HikOS', ansible_distribution.split(' ')[0]) }}"

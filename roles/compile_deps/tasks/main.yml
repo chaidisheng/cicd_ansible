@@ -1,0 +1,94 @@
+---
+- name: Print ansible distribution
+  ansible.builtin.debug:
+    var: ansible_distribution
+
+- name: Collect ansible distribution
+  ansible.builtin.set_fact:
+    dist: "{{ ansible_distribution.split(' ')[0] }}"
+
+- name: Include system-specific repository configuration tasks
+  include_tasks: "{{ dist }}.yml"
+  when: dist in ['CentOS', 'openEuler', 'Kylin']
+  tags: repo_setup
+
+- name: fail process - not support os system
+  ansible.builtin.fail:
+    msg: "Unsupported distribution: {{ dist }}"
+  when: dist not in ['CentOS', 'openEuler', 'Kylin']
+
+- name: install rpmbuild
+  ansible.builtin.yum:
+    name:
+      - wget
+      - rpmdevtools
+      - rpm-build
+    state: present
+
+- name: install gcc-g++ compiler
+  ansible.builtin.yum:
+    name: "{{ item.pkg }}"
+    state: present
+    skip_broken: yes
+  loop:
+    - { pkg: gcc, condition: false }
+    - { pkg: gcc-c++, condition: false }
+    - { pkg: gcc-toolset-7-gcc, condition: false }
+    - { pkg: gcc-toolset-7-gcc-c++, condition: false }
+    - { pkg: gcc-toolset-10-gcc, condition: false }
+    - { pkg: gcc-toolset-10-gcc-c++, condition: false }
+  when: item.condition
+  loop_control:
+    label: "{{ item.pkg }}"
+
+- name: Copy self code deps package
+  ansible.builtin.copy:
+    src: libxlsreader8-1.6.2-3.4.{{ ansible_architecture }}.rpm
+    dest: /tmp/
+    mode: '0644'
+
+- name: Install libxlsreader library
+  ansible.builtin.yum:
+    name: /tmp/libxlsreader8-1.6.2-3.4.{{ ansible_architecture }}.rpm
+    state: present
+    disable_gpg_check: yes
+
+- name: Create libxlsreader symbolic link
+  ansible.builtin.file:
+    src: /lib64/libxlsreader.so.8
+    dest: /lib64/libxlsreader.so
+    state: link
+    force: yes
+
+# example for yum repository and pip
+#- name: Add repository
+#  ansible.builtin.yum_repository:
+#    name: epel
+#    description: EPEL YUM repo
+#    baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+#    file: external_repos
+#    gpgcheck: no
+#    enabled: no
+#    state: present
+#    priority: 2
+#  register: result
+#  until: result is succeeded
+#
+#- name: Install multi python packages with version specifiers
+#  ansible.builtin.pip:
+#    name:
+#      - django>1.11.0,<1.12.0
+#      - bottle>0.10,<0.20,!=0.11
+#
+#- name: Install specified python requirements and custom Index URL
+#  ansible.builtin.pip:
+#    requirements: /my_app/requirements.txt
+#    extra_args: -i https://example.com/pypi/simple
+#
+#- name: Install specified python requirements offline from a local directory with downloaded packages
+#  ansible.builtin.pip:
+#    requirements: /my_app/requirements.txt
+#    virtualenv: /my_app/venv
+#    virtualenv_command: "{{ ansible_python_interpreter }} -m venv"
+#    virtualenv_site_packages: yes
+#    extra_args: "--no-index --find-links=file:///my_downloaded_packages_dir"

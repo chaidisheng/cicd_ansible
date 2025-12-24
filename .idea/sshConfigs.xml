@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SshConfigs">
+    <configs>
+      <sshConfig authType="PASSWORD" host="192.168.28.129" id="04c1afdf-aba6-4191-ae9b-26653181f648" port="22" customName="192.168.28.129" nameFormat="CUSTOM" username="root" useOpenSSHConfig="true">
+        <option name="customName" value="192.168.28.129" />
+      </sshConfig>
+      <sshConfig authType="PASSWORD" host="10.42.214.130" id="a97ddb8c-704a-4327-a172-adb97cf5a70f" port="55555" customName="10.42.214.130" nameFormat="CUSTOM" username="root" useOpenSSHConfig="true">
+        <option name="customName" value="10.42.214.130" />
+      </sshConfig>
+      <sshConfig authType="PASSWORD" host="10.42.214.87" id="ad9704c1-cad3-4b86-a1a9-2d58ed69ed31" port="22" nameFormat="DESCRIPTIVE" username="root" useOpenSSHConfig="true" />
+    </configs>
+  </component>
+</project>

@@ -1,0 +1,19 @@
+---
+- name: basename newest_package_file
+  ansible.builtin.set_fact:
+    newest_package_name: "{{ hostvars['localhost']['newest_package_path'] | basename }}"
+  run_once: True
+
+- name: New publish package dest directory
+  ansible.builtin.file:
+    path: "{{ publish_path }}"
+    state: directory
+
+- name: publish package
+  ansible.builtin.copy:
+    src: "{{ hostvars['localhost']['newest_package_path'] }}"
+    dest: "{{ publish_path }}/{{ newest_package_name }}"
+    force: yes
+    
+
+      

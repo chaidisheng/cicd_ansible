@@ -1,0 +1,50 @@
+###Kylin Linux Advanced Server 10 - os repo###
+
+[ks10-adv-os]
+name = Kylin Linux Advanced Server 10 - OS
+baseurl = http://af-proxy.hikvision.com.cn/artifactory/Generic-zhongbiao-kylin-proxy/V10/V10SP3/os/adv/lic/base/$basearch/
+gpgcheck = 1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-kylin
+enabled = 1
+
+[ks10-adv-updates]
+name = Kylin Linux Advanced Server 10 - Updates
+baseurl = http://af-proxy.hikvision.com.cn/artifactory/Generic-zhongbiao-kylin-proxy/V10/V10SP3/os/adv/lic/updates/$basearch/
+gpgcheck = 1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-kylin
+enabled = 1
+
+[ks10-adv-addons]
+name = Kylin Linux Advanced Server 10 - Addons
+baseurl = https://update.cs2c.com.cn/NS/V10/V10SP3/os/adv/lic/addons/$basearch/
+gpgcheck = 1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-kylin
+enabled = 0
+
+[ks10-openkylin-os]
+name = Kylin Linux Advanced Server 10 - OS
+baseurl = http://af-proxy.hikvision.com.cn/artifactory/generic-eps-server.openkylin.top-remote/NS/V10/V10SP3-2403/EPKL/main/$basearch/
+gpgcheck = 1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-kylin
+enabled = 1
+
+[ks10-openkylin-updates]
+name = Kylin Linux Advanced Server 10 - Updates
+baseurl = http://af-proxy.hikvision.com.cn/artifactory/generic-eps-server.openkylin.top-remote/NS/V10/V10SP3-2403/EPKL/update/main/$basearch/
+gpgcheck = 1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-kylin
+enabled = 1
+
+[ks10-openkylin-addons]
+name = Kylin Linux Advanced Server 10 - Addons
+baseurl = http://af-proxy.hikvision.com.cn/artifactory/generic-eps-server.openkylin.top-remote/NS/V10/V10SP3-2403/EPKL/addons/$basearch/
+gpgcheck = 1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-kylin
+enabled = 0
+
+[ks10-openkylin-multi_version]
+name = Kylin Linux Advanced Server 10 - multi version
+baseurl = http://af-proxy.hikvision.com.cn/artifactory/generic-eps-server.openkylin.top-remote/NS/V10/V10SP3-2403/EPKL/multi_version/Storage/$basearch/
+gpgcheck = 1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-kylin
+enabled = 1

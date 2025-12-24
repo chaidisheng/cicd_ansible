@@ -1,0 +1,9 @@
+---
+- hosts: "{{ host_group }}"
+  gather_facts: true
+  become: yes
+  roles:
+    - compile_deps
+  tags:
+    - pacific
+    - luminous

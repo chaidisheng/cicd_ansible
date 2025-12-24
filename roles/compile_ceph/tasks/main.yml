@@ -1,0 +1,223 @@
+---
+- name: Clean old ceph_code
+  ansible.builtin.file:
+    path: "/{{ compile_user }}/ceph_code"
+    state: absent
+
+- name: Prepare code directory
+  ansible.builtin.file:
+    path: "/{{ compile_user }}/ceph_code"
+    state: directory
+    owner: "{{ compile_user }}"
+    group: "{{ compile_user }}"
+    mode: '0755'
+    recurse: yes
+
+- name: Copy svn code package
+  ansible.builtin.copy:
+    src: "{{ svn_package_path }}"
+    dest: "/{{ compile_user }}/ceph_code/{{ svn_package_name }}"
+    force: yes
+
+- name: Unzip code package
+  ansible.builtin.unarchive:
+    src: "/{{ compile_user }}/ceph_code/{{ svn_package_name }}"
+    dest: "/{{ compile_user }}/ceph_code/"
+    remote_src: yes
+  ignore_errors: yes
+
+- name: Decompress ceph src rpm
+  ansible.builtin.shell: rpmbuild -rp {{ ceph_version }}*.src.rpm
+  args:
+    chdir:  /{{ compile_user }}/ceph_code/hikos/hikos_ceph/{{ source_version }}/{{ ceph_version }}/ceph_src_rpm/
+    creates: "/{{ compile_user }}/rpmbuild/BUILD/{{ ceph_version }}"
+
+#- name: Merge ceph source code
+#  ansible.builtin.copy:
+#    src: '/{{ compile_user }}/ceph_code/hikos/hikos_ceph/{{ source_version }}/{{ ceph_version }}/code/{{ ceph_version }}'
+#    dest: '/{{ compile_user }}/rpmbuild/BUILD/'
+#    force: yes
+#    remote_src: yes
+#    mode: preserve
+#    follow: no
+#    directory_mode: preserve
+
+- name: Merge ceph source code
+  ansible.builtin.shell:
+    cmd: \cp -arf ./*  /{{ compile_user }}/rpmbuild/BUILD/{{ ceph_version }}/
+    chdir: /{{ compile_user }}/ceph_code/hikos/hikos_ceph/{{ source_version }}/{{ ceph_version }}/code/{{ ceph_version }}
+
+- block:
+  - name: Replace ceph16 ceph.spec
+    ansible.builtin.copy:
+      src: '/{{ compile_user }}/ceph_code/hikos/hikos_ceph/{{ source_version }}/{{ ceph_version }}/config/{{ spec_version }}.spec'
+      dest: '/{{ compile_user }}/rpmbuild/SPECS/ceph.spec'
+      remote_src: yes
+      force: yes
+    when: ceph_version == 'ceph-16.2.10'
+
+  - name: replace ceph12 ceph.spec
+    ansible.builtin.copy:
+      src: '/{{ compile_user }}/ceph_code/hikos/hikos_ceph/{{ source_version }}/{{ ceph_version }}/code/{{ ceph_version }}/{{ spec_version }}.spec'
+      dest: '/{{ compile_user }}/rpmbuild/SPECS/'
+      remote_src: yes
+      force: yes
+    when: ceph_version  == 'ceph-12.2.12'
+
+- name: Setup distribution
+  ansible.builtin.setup:
+    gather_subset:
+      - distribution
+
+- name: Clean old ceph rpm directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "/{{ compile_user }}/rpmbuild/RPMS/{{ ansible_architecture }}"
+    - "/{{ compile_user }}/rpmbuild/RPMS/noarch"
+
+- name: make ceph source code
+  ansible.builtin.command: "rpmbuild -ba ceph.spec"
+  args:
+    chdir: "/{{ compile_user }}/rpmbuild/SPECS"
+
+# ceph-disk python lib
+- block:
+  - name: Get python3 version
+    ansible.builtin.shell: python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')"
+    register: version
+
+  - name: Print python version
+    ansible.builtin.debug:
+      msg: "python version: {{ version.stdout }}"
+
+  - name: Rename python lib path
+    ansible.builtin.command:
+      cmd: mv python3.9 python{{ version.stdout }}
+      chdir: "/{{ compile_user }}/ceph_code/software/FusionOS-ceph/other/usr/lib/"
+    when: version.stdout != "3.9"
+
+# make self admin code
+- block:
+  - name: Pre make admin code
+    ansible.builtin.file:
+      path: "{{ item.path }}"
+      state: directory
+      recurse: yes
+      owner: "{{ item.owner | default('root') }}"
+      group: "{{ item.group | default('root') }}"
+      mode: "{{ item.mode | default('0755') }}"
+    with_items:
+      - { path: '/home/hikos/software/FusionOS-ceph/bin/', mode: '0755' }
+      - { path: '/home/hikos/software/FusionOS-ceph/lib64/', mode: '0644' }
+
+  - name: Make admin code
+    ansible.builtin.shell: "make -j$(nproc)"
+    args:
+      chdir: "/{{ compile_user }}/ceph_code/hikos/"
+
+  - name: Find FusionOS rpm wildcard
+    ansible.builtin.find:
+      paths: "/{{ compile_user }}/rpmbuild/RPMS/{{ ansible_architecture }}/"
+      patterns: "^FusionOS-.*.rpm"
+      use_regex: true
+    register: wildcard_files_to_delete
+
+  - name: Delete rpm wildcard
+    ansible.builtin.file:
+      path: "{{ item.path }}"
+      state: absent
+    with_items: "{{ wildcard_files_to_delete.files }}"
+
+  - name: Add execute permission to script
+    ansible.builtin.file:
+      path: "/{{ compile_user }}/ceph_code/software/auto_make_pkg.sh"
+      mode: '0755'
+
+  - name: Do package FusionOS-ceph
+    ansible.builtin.shell: software/auto_make_pkg.sh
+    args:
+      chdir: "/{{ compile_user }}/ceph_code/"
+
+# rpmbuild access_hard_disk_info
+- block:
+  - name: put access_hard_disk_info.spec
+    ansible.builtin.template:
+      src: "access_hard_disk_info.spec.j2"
+      dest: "/{{ compile_user }}/rpmbuild/SPECS/access_hard_disk_info.spec"
+      force: yes
+  
+  - name: Make access_hard_disk_info
+    ansible.builtin.command: make access_hard_disk_info
+    args:
+      chdir: "/{{ compile_user }}/ceph_code/hikos/hikos_disk"
+  
+  - name: Create access_hard_disk_info dest directory
+    ansible.builtin.file:
+      path: "/{{ compile_user }}/rpmbuild/SOURCES/access_hard_disk_info-1.0.0/bin"
+      state: directory
+      recurse: yes
+  
+  - name: copy access_hard_disk_info
+    ansible.builtin.copy:
+      src: "/{{ compile_user }}/ceph_code/hikos/hikos_disk/access_hard_disk_info"
+      dest: "/{{ compile_user }}/rpmbuild/SOURCES/access_hard_disk_info-1.0.0/bin/"
+      mode: '0755'
+      remote_src: yes
+  
+  - name: Tar access_hard_disk_info source gz
+    ansible.builtin.archive:
+      path: "/{{ compile_user }}/rpmbuild/SOURCES/access_hard_disk_info-1.0.0"
+      dest: "/{{ compile_user }}/rpmbuild/SOURCES/access_hard_disk_info-1.0.0.tar.gz"
+      format: gz
+      remove: false
+  
+  - name: Package access_hard_disk_info
+    ansible.builtin.command: rpmbuild -ba access_hard_disk_info.spec
+    args: 
+      chdir: /{{ compile_user }}/rpmbuild/SPECS/
+  rescue:
+    - name: Clean access_hard_disk_info
+      file:
+        path: "/{{ compile_user }}/rpmbuild/SOURCES/access_hard_disk_info-1.0.0"
+        state: absent
+      ignore_errors: yes
+
+# rpmbuild ceph_disk_local
+- block:
+    - name: Put ceph_disk_local.spec
+      ansible.builtin.template:
+        src: "ceph_disk_local.spec.j2"
+        dest: "/{{ compile_user }}/rpmbuild/SPECS/ceph_disk_local.spec"
+        force: yes
+        
+    - name: Create ceph_disk_local dest directory
+      ansible.builtin.file:
+        path: "/{{ compile_user }}/rpmbuild/SOURCES/ceph_disk_local-1.0.0/root"
+        state: directory
+        recurse: yes
+
+    - name: Copy ceph_disk_local
+      ansible.builtin.copy:
+        src: "/{{ compile_user }}/ceph_code/software/FusionOS-ceph/bin/ceph_disk_local.sh"
+        dest: "/{{ compile_user }}/rpmbuild/SOURCES/ceph_disk_local-1.0.0/root/"
+        mode: '0755'
+        remote_src: yes
+
+    - name: Tar ceph_disk_local sources
+      ansible.builtin.archive:
+        path: "/{{ compile_user }}/rpmbuild/SOURCES/ceph_disk_local-1.0.0"
+        dest: "/{{ compile_user }}/rpmbuild/SOURCES/ceph_disk_local-1.0.0.tar.gz"
+        format: gz
+        
+    - name: Package ceph_disk_local
+      ansible.builtin.command:
+        cmd: rpmbuild -ba ceph_disk_local.spec
+        chdir: /{{ compile_user }}/rpmbuild/SPECS/
+  rescue:
+    - name: Clean ceph_disk_local
+      ansible.builtin.file:
+        path: "/{{ compile_user }}/rpmbuild/SOURCES/ceph_disk_local-1.0.0"
+        state: absent
+      ignore_errors: yes

@@ -1,0 +1,43 @@
+# 本地CICD根目录
+CICD_base_path: /mnt/CICD
+CICD_source_path: /mnt/ceph_achievements
+svn_package_name: "HikOS_Pacific.zip"
+#svn_package_name: "HikOS_Luminous.zip"
+## svn源码压缩包, 压缩除.git外的内容, 暂定zip格式, 因为windows比较方便
+svn_package_path: "{{ CICD_base_path }}/{{ svn_package_name }}"
+#svn_merge_path: "{{ CICD_base_path }}/merge"
+svn_version: V3.0.0
+ceph_version: ceph-16.2.10
+#ceph_version: ceph-12.2.12
+source_version: source_16
+#source_version: source
+spec_version: cephbase
+#spec_version: ceph
+
+# 编译机信息
+compile_user: "root"
+## openEuler
+# openEuler_releasever: "openEuler-22.03-LTS-SP1"
+# 2025/6/5后云计算把操作系统升级至HikOS 1.2.0 (openEuler-22.03-LTS-SP4)
+openEuler_releasever: "openEuler-22.03-LTS-SP4"
+
+# 部署测试放包路径
+deploy_package_path: /var/lib/dcm/deploy/ceph-packages
+pxe_CD_package_path: /opt/cd/packages
+
+# 发布机信息
+## 包路径
+publish_path_base: "/var/www/html/ceph"
+## 提供给边缘云
+publish_path_for_Edge: "{{ publish_path_base }}/Edge"
+## 提供给中心云和KOS
+publish_path_for_Center: "{{ publish_path_base }}"
+## 提供给国产化,由于这里的路径是国产化当时提供的路径,可能存在差异,暂不通过host_group合并
+#publish_path_for_dual_pacific: "{{ publish_path_base }}/openEuler_dual_pacific"
+#publish_path_for_dual_luminous: "{{ publish_path_base }}/openEuler_dual_luminous"
+publish_path_for_dual_pacific: "{{ publish_path_base }}/kylin_dual_pacific"
+#publish_path_for_dual_luminous: "{{ publish_path_base }}/kylin_dual_luminous"
+
+#部署节点信息
+user_hosts_ini_suffix: "hosts.ini"
+user_conf_path_prefix: "{{ playbook_dir }}/../env_config"

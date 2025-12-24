@@ -1,0 +1,92 @@
+- hosts: localhost
+  gather_facts: false
+  roles:
+    - role: choose_project
+  tasks:
+    - name: Pre update storage all in one
+      tags: [always]
+      block:
+        - name: get source path return
+          ansible.builtin.shell: "ls -dt {{ CICD_source_path }}/FusionOS_{{ svn_version }}*.zip | head -n 1"
+          register: source_path_return
+          when: source_path_return is not defined
+
+        - name: debug source path return
+          ansible.builtin.debug:
+            msg: "{{ source_path_return }}"
+          when: source_path_return is defined
+
+        - name: Override code source gz
+          ansible.builtin.copy:
+            src: '{{ source_path_return.stdout }}'
+            dest: '{{ svn_package_path }}'
+            force: yes
+
+        - name: Clean temp directory
+          ansible.builtin.file:
+            path: "{{ CICD_base_path }}/tmp_ceph_code"
+            state: absent
+
+        - name: Create temp directory
+          ansible.builtin.file:
+            path: "{{ CICD_base_path }}/tmp_ceph_code"
+            state: directory
+            owner: "{{ compile_user }}"
+            group: "{{ compile_user }}"
+            mode: '0755'
+            recurse: yes
+
+        - name: Copy source code to temp path
+          ansible.builtin.copy:
+            src: '{{ svn_package_path }}'
+            dest: '{{ CICD_base_path }}/tmp_ceph_code/'
+            force: yes
+
+        - name: Unzip source code
+          ansible.builtin.command:
+            cmd: unzip -o '{{ svn_package_name }}' -d '{{ CICD_base_path }}/tmp_ceph_code/'
+            chdir: "{{ CICD_base_path }}/tmp_ceph_code"
+
+        - name: Clean old storage_all_in_one
+          ansible.builtin.file:
+            path: "{{ item.path }}"
+            state: absent
+          with_items:
+              - { path: '{{ ceph_package_path }}/idatacloud-ceph' }
+              - { path: '{{ ceph_package_path }}/META-INF' }
+              - { path: '{{ ceph_package_path }}/components' }
+              - { path: '{{ ceph_package_path }}/rpm' }
+              - { path: '{{ ceph_package_path }}/ceph-run' }
+
+        - name: Prepare create ceph package path
+          ansible.builtin.file:
+            path: "{{ item.path }}"
+            state: directory
+            recurse: yes
+            owner: "{{ item.owner | default('root') }}"
+            group: "{{ item.group | default('root') }}"
+            mode: "{{ item.mode | default('0755') }}"
+          with_items:
+            - { path: '{{ ceph_package_path }}', mode: '0755' }
+            - { path: '{{ ceph_package_path }}/ceph-run', mode: '0777' }
+            - { path: '{{ ceph_package_path }}/ceph-run/ceph', mode: '0777' }
+            - { path: '{{ ceph_package_path }}/ceph-run/packet', mode: '0777' }
+            - { path: '{{ ceph_package_path }}/ceph-run/packet/bin', mode: '0777' }
+            - { path: '{{ ceph_package_path }}/ceph-run/packet/lib64', mode: '0777' }
+            - { path: '{{ ceph_package_path }}/ceph-run/packet/FusionOS-ceph', mode: '0777' }
+            - { path: '{{ ceph_package_path }}/ceph-run/readme', mode: '0777' }
+            - { path: '{{ ceph_package_path }}/pre_deploy_package', mode: '0777' }
+            - { path: '{{ ceph_package_path }}/components', mode: '0755' }
+            - { path: '{{ ceph_package_path }}/idatacloud-ceph', mode: '0755' }
+            - { path: '{{ ceph_package_path }}/META-INF', mode: '0755' }
+            - { path: '{{ ceph_package_path }}/rpm', mode: '0755' }
+
+        - name: Replace storage_all_in_one
+          ansible.builtin.copy:
+            src: '{{ CICD_base_path }}/tmp_ceph_code/software/FusionOS-ceph/bin/ceph-ansible/storage_all_in_one/'
+            dest: '{{ ceph_package_path }}/'
+            force: yes
+            remote_src: yes
+            mode: '0755'
+            owner: "{{ compile_user }}"
+            group: "{{ compile_user }}"

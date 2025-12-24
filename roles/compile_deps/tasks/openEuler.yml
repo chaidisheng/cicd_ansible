@@ -1,0 +1,68 @@
+---
+- name: Install basic build tools
+  ansible.builtin.yum:
+    name:
+      - cmake
+      - gperf
+      - libtool
+      - nasm
+      - xmlstarlet
+      - rpmdevtools
+      - rpm-build
+      - createrepo
+      - ccache
+      - ninja-build
+    state: present
+
+- name: Install development library files
+  ansible.builtin.yum:
+    name:
+      - CUnit-devel
+      - boost-random
+      - cryptsetup-devel
+      - expat-devel
+      - fmt-devel
+      - fuse-devel
+      - gperftools-devel
+      - leveldb-devel
+      - libaio-devel
+      - libbabeltrace-devel
+      - libblkid-devel
+      - libcap-ng-devel
+      - libcurl-devel
+      - libibverbs-devel
+      - libicu-devel
+      - libnl3-devel
+      - liboath-devel
+      - librabbitmq-devel
+      - librdkafka-devel
+      - librdmacm-devel
+      - libxml2-devel
+      - lttng-ust-devel
+      - lz4-devel
+      - nss-devel
+      - openldap-devel
+      - snappy-devel
+      - sqlite-devel
+      - xfsprogs-devel
+      - libudev-devel
+      - librados-devel
+    state: present
+
+- name: Install language support
+  ansible.builtin.yum:
+    name:
+      - lua-devel
+      - luarocks
+      - python3-Cython
+      - python3-prettytable
+      - python3-sphinx
+    state: present
+
+- name: Install system tools
+  ansible.builtin.yum:
+    name:
+      - checkpolicy
+      - selinux-policy-devel
+      - valgrind-devel
+    state: present

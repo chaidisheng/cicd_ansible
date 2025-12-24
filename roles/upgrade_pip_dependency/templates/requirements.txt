@@ -1,0 +1,54 @@
+# base whl
+ansible==2.9.27
+ansible-runner==1.4.6
+cryptography==36.0.1
+ruamel.yaml<0.18.0
+ruamel.yaml.clib
+charset-normalizer==2.0.0
+pyOpenSSL==21.0.0
+numpy==1.19.5
+eventlet==0.36.1
+bcrypt
+cffi
+future
+jinja2
+paramiko
+pexpect
+pysocks
+pytz
+ptyprocess
+pycparser
+PyNaCl
+PyYAML
+treelib
+wcwidth
+decorator
+prettytable
+babel
+chardet
+idna
+requests
+urllib3
+# ceph whl
+cherrypy
+# ceph exporter whl
+prometheus_client
+# restful api whl
+astroid
+certifi
+Click
+Flask
+Flask-Login
+flask_jwt_extended
+flask_cas
+isort
+itsdangerous
+MarkupSafe
+mccabe
+redis
+pycodestyle
+six
+Werkzeug
+wrapt
+gunicorn
+# ceph osd whl

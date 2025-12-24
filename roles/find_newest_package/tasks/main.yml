@@ -1,0 +1,15 @@
+---
+- name: get newest package path
+  ansible.builtin.shell: "ls -dt {{ ceph_package_path }}/*.tar.gz | head -n 1"
+  register: newest_package_path_return
+  when: newest_package_path is not defined
+
+- name: debug newest package path
+  ansible.builtin.debug:
+    msg: "{{ newest_package_path_return }}"
+  when: newest_package_path is not defined
+
+- name: set fact newest_package_path
+  ansible.builtin.set_fact:
+    newest_package_path: "{{ newest_package_path_return['stdout'] }}"
+  when: newest_package_path is not defined

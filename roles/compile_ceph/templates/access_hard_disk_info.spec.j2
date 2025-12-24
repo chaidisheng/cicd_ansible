@@ -1,0 +1,33 @@
+Name:           access_hard_disk_info
+Version:        1.0.0
+Release:        1%{dist}
+Summary:        access_hard_disk_info C300 preinstall disk interface rpm
+Source:        %{name}-%{version}.tar.gz
+License:        commercial
+URL:            hikvision.com
+
+#Requires:       smartmontools, util-linux
+
+%description
+the extremely high-performance web server.
+
+%prep
+%setup -q
+
+#build
+%install
+install -m -755 -D bin/access_hard_disk_info %{buildroot}/bin/access_hard_disk_info
+
+%post
+
+%clean
+rm -rf %{buildroot}
+rm -rf %{_builddir}/%{name}-%{version}
+
+%files
+%defattr(-,root,root,755)
+#%{_bindir}/%{name}
+%attr(0755,root,root) /bin/access_hard_disk_info
+
+
+%changelog

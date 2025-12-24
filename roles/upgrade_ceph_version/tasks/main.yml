@@ -1,0 +1,9 @@
+---
+- name: Set package version
+  ansible.builtin.set_fact:
+    ceph_version: "{{ (ceph_version.split('-')[1:] | join('-')) if '-' in ceph_version else '' }}"
+
+- name: Create package info file
+  ansible.builtin.template:
+    src: packageinfo.xml.j2
+    dest: "{{ ceph_package_path }}/META-INF/packageinfo.xml"

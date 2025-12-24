@@ -1,0 +1,35 @@
+- name: CICD ansible test time
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Debug hostname
+      tags: [always]
+      ansible.builtin.debug:
+        var: inventory_hostname
+
+    - name: Debug begin now time
+      tags: [always]
+      ansible.builtin.debug:
+        msg: "cicd begin now time: {{ now(utc=false,fmt='%Y-%m-%d %H:%M:%S') }}"
+
+    - name: Debug ansible home
+      tags: [always]
+      ansible.builtin.debug:
+        msg: "ansible home: {{ playbook_dir }}"
+
+- import_playbook: update_storage_all_in_one.yml
+- import_playbook: compile_deps.yml
+- import_playbook: compile_ceph.yml
+- import_playbook: upgrade_dependencies.yml
+- import_playbook: continuous_development.yml
+#- import_playbook: set_C300.yaml
+#- import_playbook: continuous_backup.yml
+#- import_playbook: continuous_pxe.yml
+- import_playbook: continuous_publish.yaml
+
+- hosts: localhost
+  post_tasks:
+  - name: Debug end now time
+    ansible.builtin.debug:
+      msg: "cicd end now time: {{ now(utc=false,fmt='%Y-%m-%d %H:%M:%S') }}"
+    tags: [always]

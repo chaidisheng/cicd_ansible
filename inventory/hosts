@@ -1,0 +1,152 @@
+#测试机
+[centos_x86_test]
+;10.42.204.54 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="9b648"
+;10.42.204.57 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="9b648"
+;10.42.204.59 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="9b648"
+; 10.192.47.130 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik@123++"
+; 10.192.47.131 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik@123++"
+; 10.192.47.132 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik@123++"
+; 10.192.47.133 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik@123++"
+; 10.192.47.134 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik@123++"
+10.42.214.104 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+10.42.214.105 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+10.42.214.106 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+
+[kylin_x86_test]
+; 10.42.214.123 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik@2022++" 
+; 10.19.227.6 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik@2022++" 
+;10.42.214.144 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+;10.42.214.145 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+;10.42.214.146 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+;10.192.100.12 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Jscc@321++"
+10.192.121.66 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Jscc@321++"
+10.192.121.86 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Jscc@321++"
+10.192.121.87 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Jscc@321++"
+
+[kylin_aarch64_test]
+; 10.19.224.22 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik@2022++"
+; 10.19.224.38 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik@123++" 
+; 10.19.224.41 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik@123++" 
+; 10.19.224.39 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik@123++"
+10.19.235.183 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Jscc@2022++"
+
+[openEuler_x86_test]
+10.42.204.85 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+
+[openEuler_x86_ceph_test]
+10.19.219.162 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik@123++" 
+
+[openEuler_x86_ceph16_test]
+;10.42.214.144 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+;10.42.214.145 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+;10.42.214.146 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+
+10.42.214.148 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+10.42.214.149 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+10.42.214.150 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+
+;10.42.214.160 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+;10.42.214.161 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+;10.42.214.162 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+
+[openEuler_x86_ipv6_test]
+10.42.214.160 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+10.42.214.161 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+10.42.214.162 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+
+[openEuler_x86_ceph16_bak]
+10.42.214.131 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+10.42.214.132 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+10.42.214.133 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+
+[openEuler_x86_6nodes]
+10.42.214.148 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+10.42.214.149 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+10.42.214.150 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+10.42.214.163 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+10.42.214.164 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+10.42.214.165 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+
+[openEuler_arm]
+; 10.19.224.27 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik@123++" 
+; 10.19.224.22 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik@123++" 
+; 10.19.219.202 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik@123++"
+10.42.214.120 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++" 
+
+; [upgrade_centos]
+; 10.42.204.48:55555 ansible_ssh_pass="9b648" 
+; 10.42.204.49:55555 ansible_ssh_pass="9b648" 
+; 10.42.204.51:55555 ansible_ssh_pass="9b648" 
+
+#成果物发布设备
+[publish_server]
+; 10.192.55.192 ansible_port=22 ansible_ssh_user=root ansible_ssh_pass="9b648" 
+10.33.41.25 ansible_port=22 ansible_ssh_user=root ansible_ssh_pass="Hik@2022++"
+
+#成果物备份设备
+[backup_server]
+10.192.55.130 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file=/root/.ssh/id_ed25519 ansible_ssh_pass="9b648"
+
+#中心云PXE设备
+[pxe_server]
+10.42.238.7 ansible_port=55555 ansible_ssh_user=root ansible_ssh_pass="Hik9b648++"
+
+#编译机
+[compile]
+10.42.204.44 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++" 
+10.19.224.25 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik@123++" 
+;10.42.214.113 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++" 
+;10.42.214.75 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++" 
+
+[ceph12_centos_x86_compile]
+10.192.55.130 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa" ansible_ssh_pass="Hik9b648++"
+
+[ceph12_openEuler_x86_compile]
+10.42.204.44 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++" 
+
+[ceph12_openEuler_aarch_compile]
+10.19.224.25 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik@123++" 
+
+[ceph16_openEuler_mix_compile]
+10.42.214.128 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++" 
+10.19.224.45 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik@123++"
+;10.42.214.112 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+
+[ceph16_openEuler_dual_compiler]
+10.42.214.85 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="" ansible_ssh_pass="P@ss word2024!"
+10.42.214.86 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="" ansible_ssh_pass="P@ss word2024!"
+
+[ceph12_kylin_x86_compile]
+;10.19.227.5 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik@2022++" 
+;10.19.224.10 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik@123++"
+;10.42.214.115 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+;10.42.214.118 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+192.168.28.132 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa" ansible_ssh_pass="21168eye+"
+
+[ceph12_kylin_aarch64_compile]
+10.19.224.10 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik@123++"
+
+[ceph16_kylin_x86_compile]
+;10.42.214.82 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+10.42.214.83 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="21168eye+"
+
+[ceph16_kylin_aarch64_compile]
+;10.42.214.82 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+10.42.214.84 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="21168eye+"
+
+[ceph16_kylin_dual_compile]
+10.42.214.83 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="21168eye+"
+10.42.214.84 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="21168eye+"
+
+[ceph12_kylin_dual_compile]
+10.19.227.5 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik@2022++" 
+10.19.224.10 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik@123++" 
+
+[deps_node]
+10.19.224.27 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik@123++" ansible_python_interpreter=/usr/bin/python3
+10.42.204.85 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++" ansible_python_interpreter=/usr/bin/python3
+
+[local_node]
+;127.0.0.1 ansible_port=55555 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa_CICD" ansible_ssh_pass="Hik9b648++"
+127.0.0.1 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_ed25519"
+;127.0.0.1 ansible_port=22 ansible_ssh_user=root ansible_ssh_private_key_file="/root/.ssh/id_rsa"

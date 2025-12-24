@@ -1,0 +1,51 @@
+---
+- name: Set pip download command
+  ansible.builtin.set_fact:
+    pip_download_cmd: "pip3 wheel --only-binary=all -r requirements.txt -w ."
+
+- name: Debug pip_download_cmd
+  ansible.builtin.debug:
+    msg: "{{ pip_download_cmd }}"
+
+- name: Clear old pip download packages
+  ansible.builtin.file:
+    path: "/{{ compile_user }}/pip3"
+    state: absent
+
+- name: Mkdir pip download packages
+  ansible.builtin.file:
+    path: "/{{ compile_user }}/pip3"
+    state: directory
+    mode: '0755'
+    owner: "{{ compile_user }}"
+    group: "{{ compile_user }}"
+
+- name: copy ceph deps pip requirements
+  ansible.builtin.template:
+    src: "requirements-{{ distribution }}.txt.j2"
+    dest: "/{{ compile_user }}//pip3/requirements.txt"
+  vars:
+    distribution: "{{ ansible_distribution.split(' ')[0] }}"
+
+- name: download pip packages
+  ansible.builtin.command: "{{ pip_download_cmd }}"
+  args:
+    chdir: "/{{ compile_user }}/pip3"
+
+- name: delete pip requirements-Kylin.txt.j2
+  ansible.builtin.file:
+    path: "/{{ compile_user }}/pip3/requirements.txt"
+    state: absent
+
+- name: tar pip packages
+  ansible.builtin.archive:
+    path: "/{{ compile_user }}/pip3"
+    dest: "/{{ compile_user }}/pip3_{{ distro_name }}_{{ ansible_architecture }}.tar.gz"
+    format: gz
+    remove: false
+
+- name: fetch pip packages to local
+  ansible.builtin.fetch:
+    src: "/{{ compile_user }}/pip3_{{ distro_name }}_{{ ansible_architecture }}.tar.gz"
+    dest: "{{ ceph_package_path }}/ceph-run/packet/FusionOS-ceph/"
+    flat: yes

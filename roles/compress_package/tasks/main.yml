@@ -1,0 +1,40 @@
+---
+- name: Debug ceph tar path
+  ansible.builtin.debug:
+   msg:
+     - "{{ ceph_package_path }}"
+  run_once: True
+
+- name: Found ceph tar gz
+  ansible.builtin.find:
+    paths: "{{ ceph_package_path }}"
+    patterns: "^CEPH.*.tar.gz"
+    use_regex: true
+  register: wildcard_files_to_delete
+
+- name: Print wildcard files to delete
+  ansible.builtin.debug:
+    msg: "{{ wildcard_files_to_delete.files }}"
+
+- name: Delete ceph wildcard tar
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ wildcard_files_to_delete.files }}"
+
+- name: Package new ceph16 tar
+  ansible.builtin.shell: >
+    python3 {{ playbook_dir }}/../scripts/package_tar_ceph.py -o 
+    CEPH_{{ ceph_version }} -s 
+    'ceph-run' 'pre_deploy_package' 'components' 'idatacloud-ceph' 'META-INF' 'rpm'
+  args:
+    chdir: "{{ ceph_package_path }}"
+  register: package_name
+
+- name: Debug package name
+  ansible.builtin.debug:
+    msg: "{{ ceph_package_path }}/{{ package_name.stdout }}"
+
+- name: Set fact newest_package_path
+  ansible.builtin.set_fact:
+    newest_package_path: "{{ ceph_package_path }}/{{ package_name.stdout }}"

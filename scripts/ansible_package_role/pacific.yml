@@ -1,0 +1,318 @@
+---
+# This playbook is used to install ceph packet
+##############################################
+  # general settings
+##############################################
+- name: ceph install packet start
+  debug:
+    msg: ceph install packet start ip "{{ groups['ceph-nodes'] }}" 
+  delegate_to: "{{ groups['ceph-nodes'][0] }}" 
+  run_once: true
+
+#check packet flags before installation
+- name:  check ceph installation status
+  shell: ls "{{ install_packet_flag }}"
+  register: all_install_status
+  ignore_errors: true
+
+- name:  debug ceph installation status flag
+  debug:
+    msg: "{{ all_install_status }}"
+  when: all_install_status is defined
+
+# - name: rm ceph packet dir
+#   shell: /bin/rm -rf "{{ceph_packet_dir}}"
+#   when: all_install_status.rc != 0 
+
+# - name:  get install packet dir 
+#   shell: ceph_packet_dir="{{ceph_packet_path}}";echo -n "${ceph_packet_dir%/*}"
+#   register: ceph_packet_dir
+
+- name: debug ceph_packet_dir
+  debug:
+    msg: "ceph_packet_dir: {{ ceph_packet_dir }}"
+
+- name:  copy ceph installation package
+  copy:
+    dest: "{{ceph_packet_dir}}/"
+    src: "{{ceph_packet_path}}/"
+    mode: 0777 
+  when: all_install_status is defined and all_install_status.rc != 0 
+  
+- name:  mark fusion deploy ceph
+  shell: echo '$fusion_ceph = 0;' > /var/lib/fusion_ceph.conf
+  
+- name:  config ssh_config
+  shell: "echo ' StrictHostKeyChecking no' >> /etc/ssh/ssh_config"
+  
+#- name:  chmod 777 "{{ install_packet_interface }}"
+#  shell: /bin/chmod 777 "{{ install_packet_interface }}"|tee -a "{{ rpm_log_file }}";test ${PIPESTATUS[0]} -eq 0
+#  register: chmod_status
+#  failed_when: chmod_status.rc != 0
+#  when: all_install_status is defined and all_install_status.rc != 0
+ 
+#install all ceph packet
+- block:
+  - name: setup distribution
+    setup:
+      gather_subset:
+        - distribution
+
+  - name: prepare {{ ansible_architecture }} repo
+    template:
+      src: "offline_ceph.repo.j2"
+      dest: "/etc/yum.repos.d/offline_ceph.repo"
+    
+  - name: tar zxvf package
+    shell: > 
+      mkdir -p /opt/yum_ceph
+      && tar -zxvf ceph_{{ ansible_distribution.split(' ')[0] }}_{{ ansible_architecture }}.tar.gz -C /opt/yum_ceph
+    args:
+      chdir: "{{ ceph_packet_dir }}/ceph-run/packet/FusionOS-ceph"
+
+  # - name: tar zxvf ceph-disk package
+  #   shell: tar -zxvf ceph-disk.tar.gz -C /opt/ 
+  #   args:
+  #     chdir: "{{ ceph_packet_dir }}/ceph-run/packet/FusionOS-ceph"
+
+  - name: update cache
+    shell: yum makecache
+
+  - name: install ansible
+    dnf:
+      name:
+        - ansible
+        - resource-agents
+        - python3-ansible-runner
+      state: present
+    when: ansible_distribution == "HikOS"
+
+  - name: install rpms
+    shell: > 
+      dnf --setopt=install_weak_deps=False install --best --repo offline_ceph -y 
+      gperftools-libs 
+      leveldb 
+      gd 
+      gdisk 
+      cryptsetup 
+      python3-pip 
+      jq 
+      libargon2 
+      libunwind 
+      libxslt 
+      mailcap 
+      oniguruma 
+      socat 
+      xmlstarlet 
+      net-snmp 
+      lm_sensors 
+      libwebp 
+      python3-wheel 
+      keepalived 
+      tcpdump 
+      libpcap 
+      nginx-mod-stream 
+      nginx 
+      nginx-mod-mail 
+      nginx-mod-http-xslt-filter 
+      nginx-mod-http-perl 
+      nginx-mod-http-image-filter 
+      nginx-filesystem 
+      nginx-all-modules 
+      bc 
+      jq  
+      libyaml 
+      mailx 
+      python3-pyyaml 
+      smartmontools 
+      access_hard_disk_info 
+      ceph_disk_local 
+      fmt 
+      python3-ruamel-yaml 
+      python3-ruamel-yaml-clib 
+      ceph-16.2.10 
+      ceph-fuse-16.2.10 
+      rbd-fuse-16.2.10 
+      rbd-mirror-16.2.10 
+      rbd-nbd-16.2.10 
+      ceph-osd-16.2.10 
+      ceph-mon-16.2.10 
+      ceph-mgr-16.2.10 
+      ceph-mds-16.2.10 
+      ceph-selinux-16.2.10 
+      ceph-base-16.2.10 
+      ceph-common-16.2.10 
+      python3-rbd-16.2.10 
+      python3-rgw-16.2.10 
+      python3-cephfs-16.2.10 
+      librgw2-16.2.10 
+      libcephfs2-16.2.10 
+      python3-rados-16.2.10 
+      librbd1-16.2.10 
+      librados2-16.2.10 
+      python3-ceph-argparse-16.2.10 
+      FusionOS-ceph  
+      python3-IPy 
+      python3-flask 
+      python3-markupsafe
+
+  - name: reinstall rpms
+    shell: > 
+      dnf --setopt=install_weak_deps=False reinstall --best --repo offline_ceph -y 
+      ceph-16.2.10 
+      ceph-fuse-16.2.10 
+      rbd-fuse-16.2.10 
+      rbd-mirror-16.2.10 
+      rbd-nbd-16.2.10 
+      ceph-osd-16.2.10 
+      ceph-mon-16.2.10 
+      ceph-mgr-16.2.10 
+      ceph-mds-16.2.10 
+      ceph-selinux-16.2.10 
+      ceph-base-16.2.10 
+      ceph-common-16.2.10 
+      python3-rbd-16.2.10 
+      python3-rgw-16.2.10 
+      python3-cephfs-16.2.10 
+      librgw2-16.2.10 
+      libcephfs2-16.2.10 
+      python3-rados-16.2.10 
+      librbd1-16.2.10 
+      librados2-16.2.10 
+      python3-ceph-argparse-16.2.10 
+      FusionOS-ceph
+
+  - name: upgrade rpms
+    shell: > 
+      dnf --setopt=install_weak_deps=False upgrade --best --repo offline_ceph -y 
+      gperftools-libs 
+      leveldb 
+      gd 
+      gdisk 
+      cryptsetup 
+      python3-pip 
+      jq 
+      libargon2 
+      libunwind 
+      libxslt 
+      mailcap 
+      oniguruma 
+      socat 
+      xmlstarlet 
+      net-snmp 
+      lm_sensors 
+      libwebp 
+      python3-wheel 
+      keepalived 
+      tcpdump 
+      libpcap 
+      nginx-mod-stream 
+      nginx 
+      nginx-mod-mail 
+      nginx-mod-http-xslt-filter 
+      nginx-mod-http-perl 
+      nginx-mod-http-image-filter 
+      nginx-filesystem 
+      nginx-all-modules 
+      bc 
+      jq  
+      libyaml 
+      mailx 
+      python3-pyyaml 
+      smartmontools 
+      access_hard_disk_info 
+      ceph_disk_local 
+      fmt 
+      python3-ruamel-yaml 
+      python3-ruamel-yaml-clib 
+      ceph-16.2.10 
+      ceph-fuse-16.2.10 
+      rbd-fuse-16.2.10 
+      rbd-mirror-16.2.10 
+      rbd-nbd-16.2.10 
+      ceph-osd-16.2.10 
+      ceph-mon-16.2.10 
+      ceph-mgr-16.2.10 
+      ceph-mds-16.2.10 
+      ceph-selinux-16.2.10 
+      ceph-base-16.2.10 
+      ceph-common-16.2.10 
+      python3-rbd-16.2.10 
+      python3-rgw-16.2.10 
+      python3-cephfs-16.2.10 
+      librgw2-16.2.10 
+      libcephfs2-16.2.10 
+      python3-rados-16.2.10 
+      librbd1-16.2.10 
+      librados2-16.2.10 
+      python3-ceph-argparse-16.2.10 
+      FusionOS-ceph
+      python3-IPy 
+      python3-flask 
+      python3-markupsafe
+  
+#  - name: install  FusionOS-ceph ceph-cephbase  rpms
+#    shell: rpm -Uvh --nodeps $(pwd)/ceph-cephbase*.rpm; rpm -Uvh --nodeps $(pwd)/FusionOS-ceph*.rpm
+#    args:
+#      chdir: "/opt/yum_ceph/{{ ansible_architecture }}"
+#    ignore_errors: true
+ 
+  # - name: install  ceph-disk 
+  #   shell: /usr/bin/cp -r -f $(pwd)/disk_dir/ceph_disk /lib/python3.9/site-packages/  ;/usr/bin/cp -r -f $(pwd)/ceph_disk-1.0.0-py3.9.egg-info /lib/python3.9/site-packages/ ; /usr/bin/cp -f $(pwd)/ceph-disk  /usr/sbin ;chmod 755 /usr/sbin/ceph-disk
+  #   args:
+  #     chdir: "/opt/ceph-disk-dir"
+
+  - name: clean rpm path
+    shell: rm -rf /opt/yum_ceph; rm -rf /opt/ceph-disk-dir; rm /etc/yum.repos.d/offline_ceph.repo;
+
+  - name: tar zxvf pip3 tar
+    shell: "tar zxvf pip3_{{ ansible_distribution.split(' ')[0] }}_{{ ansible_architecture }}.tar.gz"
+    args:
+      chdir: "{{ ceph_packet_dir }}/ceph-run/packet/FusionOS-ceph"
+
+  - name: install pip
+    shell: "pip3 install --no-deps $(pwd)/pip3/*"
+    args:
+      chdir: "{{ ceph_packet_dir }}/ceph-run/packet/FusionOS-ceph"
+
+  - name: clean pip3 path
+    shell: "rm -rf {{ ceph_packet_dir }}/ceph-run/packet/FusionOS-ceph/pip3"
+  when: all_install_status is defined and all_install_status.rc != 0
+
+# - name:  install packet in progress, about 5 min, see log in {{ rpm_log_file }}
+#   shell: sh "{{ install_packet_interface }}" |tee -a {{ rpm_log_file }};test ${PIPESTATUS[0]} -eq 0 
+#   args:
+#     chdir: "{{ ceph_packet_dir }}/ceph-run/packet/"
+#   register: result
+#   failed_when: result.rc != 0
+#   when: all_install_status is defined and all_install_status.rc != 0
+
+#install packet post
+- name: CEPH | Install Packeges post
+  include: "install_packet_post.yml"
+
+- name:  check ceph_rpm_status
+  shell: /bin/ceph -v
+  register: ceph_source_rpm_status
+  failed_when: ceph_source_rpm_status.rc != 0
+
+- name:  check ceph installation status
+  debug:
+    msg: 'ceph install packet success' 
+  when: ceph_source_rpm_status.rc == 0 
+
+- name: create install packet success flags 
+  file:
+    path: "{{ install_packet_flag }}"
+    state: touch
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  when: ceph_source_rpm_status.rc == 0 and all_install_status is defined and all_install_status.rc != 0
+
+- name: ceph upgrade | ensure ansible-playbook is linked in /usr/local/bin (on control node)
+  file:
+    src: /usr/bin/ansible-playbook
+    dest: /usr/local/bin/ansible-playbook
+    state: link
+    force: yes

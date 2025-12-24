@@ -1,0 +1,19 @@
+---
+# You can override vars by using host or group vars
+
+repo_base_url: ""
+repos_to_enable:
+  - base
+  - updates
+  - extras
+  - epel
+
+centos_repos:
+  base: ""
+  updates: ""
+
+openEuler_repos:
+  base: ""
+
+Kylin_repos:
+  base: ""

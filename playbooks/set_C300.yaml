@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+  any_errors_fatal: true
+  gather_facts: false
+  roles:
+    - role: choose_project
+    - role: find_newest_package
+      tags: [always]
+
+- hosts: "{{ hostvars['localhost']['test_host_group'] }}"
+  any_errors_fatal: true
+  gather_facts: true
+  roles:
+    - role: choose_project
+    - role: rolling_update
+      tags: [always]
