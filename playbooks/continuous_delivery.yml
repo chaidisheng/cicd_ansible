@@ -22,9 +22,9 @@
 - import_playbook: compile_ceph.yml
 - import_playbook: upgrade_dependencies.yml
 - import_playbook: continuous_development.yml
-#- import_playbook: set_C300.yaml
-#- import_playbook: continuous_backup.yml
-#- import_playbook: continuous_pxe.yml
+- import_playbook: set_C300.yaml
+- import_playbook: continuous_backup.yml
+- import_playbook: continuous_pxe.yml
 - import_playbook: continuous_publish.yaml
 
 - hosts: localhost

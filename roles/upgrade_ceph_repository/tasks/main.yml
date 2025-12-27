@@ -40,7 +40,7 @@
         - FusionOS-ceph
       state: present
       download_only: yes
-      download_dir: "/{{ compile_user }}/ceph_download_packages/{{ distro_name }}_{{ ansible_architecture }}"
+      download_dir: "/{{ compile_user }}/ceph_download_packages/{{ ansible_architecture }}"
       disable_gpg_check: yes
       disablerepo: []
       enablerepo:
@@ -63,7 +63,7 @@
         - rados-objclass-devel-12.2.12
       state: present
       download_only: yes
-      download_dir: "/{{ compile_user }}/ceph_download_packages/{{ distro_name }}_{{ ansible_architecture }}"
+      download_dir: "/{{ compile_user }}/ceph_download_packages/{{ ansible_architecture }}"
       disable_gpg_check: yes
       disablerepo: []
       enablerepo:
@@ -78,7 +78,7 @@
 - block:
   - name: Download only ceph pacific packages
     ansible.builtin.shell: >
-      dnf download --setopt=install_weak_deps=False --resolve 
+      dnf download --setopt=install_weak_deps=False --resolve --alldeps
       --arch {{ ansible_architecture }},noarch 
       ceph-16.2.10
       ceph-fuse-16.2.10
@@ -90,13 +90,13 @@
       ceph_disk_local
       FusionOS-ceph
     args:
-      chdir: "/{{ compile_user }}/ceph_download_packages/{{ distro_name }}_{{ ansible_architecture }}"
+      chdir: "/{{ compile_user }}/ceph_download_packages/{{ ansible_architecture }}"
     tags:
       - pacific
 
   - name: Download only libvirt and qemu deps pacific package
     ansible.builtin.shell: >
-      dnf download --setopt=install_weak_deps=False --resolve 
+      dnf download --setopt=install_weak_deps=False --resolve --alldeps
       --arch {{ ansible_architecture }},noarch 
       librbd-devel-16.2.10
       librados-devel-16.2.10
@@ -105,7 +105,7 @@
       librgw-devel-16.2.10
       rados-objclass-devel-16.2.10
     args:
-      chdir: "/{{ compile_user }}/ceph_download_packages/{{ distro_name }}_{{ ansible_architecture }}"
+      chdir: "/{{ compile_user }}/ceph_download_packages/{{ ansible_architecture }}"
     tags:
       - pacific
 
@@ -113,7 +113,7 @@
   block:
     - name: Find systemd and glibc packages
       ansible.builtin.find:
-        paths: "/{{ compile_user }}/ceph_download_packages/{{ distro_name }}_{{ ansible_architecture }}/"
+        paths: "/{{ compile_user }}/ceph_download_packages/{{ ansible_architecture }}/"
         patterns:
           - '^systemd.*'
           - '^glibc.*'
@@ -135,7 +135,7 @@
     - always
 
 - name: Create ceph and deps repo
-  ansible.builtin.shell: "createrepo {{ distro_name }}_{{ ansible_architecture }}"
+  ansible.builtin.shell: "createrepo {{ ansible_architecture }}"
   args:
     chdir: "/{{ compile_user }}/ceph_download_packages/"
   tags:
@@ -143,8 +143,8 @@
 
 - name: Tar ceph and deps packages
   ansible.builtin.archive:
-    path: "/{{ compile_user }}/ceph_download_packages/{{ distro_name }}_{{ ansible_architecture }}"
-    dest: "/{{ compile_user }}/ceph_download_packages/ceph_{{ distro_name }}_{{ ansible_architecture }}.tar.gz"
+    path: "/{{ compile_user }}/ceph_download_packages/{{ ansible_architecture }}"
+    dest: "/{{ compile_user }}/ceph_download_packages/ceph_{{ distribution_name }}_{{ ansible_architecture }}.tar.gz"
     format: gz
   tags:
     - always
@@ -158,7 +158,7 @@
 
 - name: Fetch ceph packages to local
   ansible.builtin.fetch:
-    src: "/{{ compile_user }}/ceph_download_packages/ceph_{{ distro_name }}_{{ ansible_architecture }}.tar.gz"
+    src: "/{{ compile_user }}/ceph_download_packages/ceph_{{ distribution_name }}_{{ ansible_architecture }}.tar.gz"
     dest: "{{ ceph_package_path }}/ceph-run/packet/FusionOS-ceph/"
     flat: true
   tags:

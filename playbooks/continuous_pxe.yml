@@ -11,5 +11,5 @@
   gather_facts: False
   roles:
     - role: choose_project
-    - role: set_package_to_pxe
+    - role: rolling_pxe
       tags: [always]

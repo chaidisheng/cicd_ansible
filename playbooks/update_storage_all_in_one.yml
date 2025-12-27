@@ -90,3 +90,14 @@
             mode: '0755'
             owner: "{{ compile_user }}"
             group: "{{ compile_user }}"
+    
+    # 替换部署时package role     
+    - name: Update ceph packages role
+      tags: [ never ]
+      ansible.builtin.copy:
+        src: '{{ playbook_dir }}/../scripts/ansible_package_role/pacific.yml'
+        dest: '{{ ceph_package_path }}/idatacloud-ceph/src/playbooks/roles/packeges/tasks/main.yml'
+        force: yes
+        mode: '0644'
+        owner: "{{ compile_user }}"
+        group: "{{ compile_user }}"

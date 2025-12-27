@@ -5,22 +5,29 @@
      - "{{ ceph_package_path }}"
   run_once: True
 
-- name: Found ceph tar gz
+- name: Find ceph tar gz
   ansible.builtin.find:
     paths: "{{ ceph_package_path }}"
     patterns: "^CEPH.*.tar.gz"
     use_regex: true
-  register: wildcard_files_to_delete
+  register: ceph_files
 
-- name: Print wildcard files to delete
+- name: Sort files by modification time (oldest first) and exclude the 3 newest
+  ansible.builtin.set_fact:
+    old_files: |
+      {% set sorted_files = ceph_files.files | sort(attribute='mtime') %}
+      {{ sorted_files[:-2] if sorted_files | length > 3 else [] }}
+      
+- name: Debug old ceph tar
   ansible.builtin.debug:
-    msg: "{{ wildcard_files_to_delete.files }}"
+    msg: "{{ old_files }}"
 
-- name: Delete ceph wildcard tar
+- name: Delete old ceph tar files (keeping 3 newest by modification time)
   ansible.builtin.file:
     path: "{{ item.path }}"
     state: absent
-  with_items: "{{ wildcard_files_to_delete.files }}"
+  loop: "{{ old_files }}"
+  when: old_files | length > 0
 
 - name: Package new ceph16 tar
   ansible.builtin.shell: >

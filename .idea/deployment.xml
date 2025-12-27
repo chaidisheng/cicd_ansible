@@ -6,7 +6,7 @@
       <paths name="10.42.214.130">
         <serverdata>
           <mappings>
-            <mapping deploy="/mnt/CICD/CICD_ansible" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/mnt/CICD/cicd_ansible" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

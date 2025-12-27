@@ -4,8 +4,10 @@
     newest_package_name: "{{ hostvars['localhost']['newest_package_path'] | basename }}"
   run_once: True
 
-- name: set package to pxe
+- name: push package to pxe
   ansible.builtin.copy:
     src: "{{ hostvars['localhost']['newest_package_path'] }}"
     dest: "{{ pxe_CD_package_path }}/{{ newest_package_name }}"
     force: yes
+  ignore_errors: yes
+  ignore_unreachable: yes

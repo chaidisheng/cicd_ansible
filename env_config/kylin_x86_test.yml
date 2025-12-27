@@ -1,10 +1,10 @@
 #安装ceph包所有的存储节点ip列表
 rpm_install:
     #存储节点1的ip(任意可以ssh免密的都可以) 例如10.192.47.148
-  - 10.192.121.66
-    #存储节点2的ip
-  - 10.192.121.86
   - 10.192.121.87
+    #存储节点2的ip
+  - 10.192.121.97
+  - 10.192.121.98
 
 osd:
   feature:
@@ -14,24 +14,25 @@ osd:
 cluster_create:
   #集群的名字, 会默认创建出以"client."开头的同名的用户名, 如client.abc
   cluster_name: abc
-  change_hosts_flag: false  
-  #存储节点外网所有配置 
+  # 修改hosts
+  change_hosts_flag: true
+  #存储节点外网所有配置
   public:
   #存储节点1的外网网口,如 bond1
   #若bond1为bond1:1,填写nic时要改成bond1_1
     - nic: ens3
       #存储节点1的外网ip, 如10.192.55.131
-      ip: 10.192.121.66
+      ip: 10.192.121.87
       mask: 255.255.255.0
       #存储节点的hostname,不填则不修改hostname
       hostname: node1
     - nic: ens3
-      ip: 10.192.121.86
+      ip: 10.192.121.97
       mask: 255.255.255.0
       #存储节点的hostname,不填则不修改hostname
       hostname: node2
     - nic: ens3
-      ip: 10.192.121.87
+      ip: 10.192.121.98
       mask: 255.255.255.0
       #存储节点的hostname,不填则不修改hostname
       hostname: node3
@@ -41,18 +42,18 @@ cluster_create:
       #若bond2为bond2:1,填写nic时要改成bond2_1
     - nic: ens3
       #存储节点1的内网ip,如10.193.55.131
-      ip: 10.192.121.66
+      ip: 10.192.121.87
       #存储节点1的内网netmask,  如255.255.255.0
       mask: 255.255.255.0
       #存储节点的hostname,不填则不修改hostname
       hostname: node1
     - nic: ens3
-      ip: 10.192.121.86
+      ip: 10.192.121.97
       mask: 255.255.255.0
       #存储节点的hostname,不填则不修改hostname
       hostname: node2
     - nic: ens3
-      ip: 10.192.121.87
+      ip: 10.192.121.98
       mask: 255.255.255.0
       #存储节点的hostname,不填则不修改hostname
       hostname: node3
@@ -124,27 +125,32 @@ pools:
     pool_size: 2
     #资源池使用的节点（ip和cluster_create字段的public一致）
     node_list:
-    - 10.192.121.66
-    - 10.192.121.86
     - 10.192.121.87
-
+    - 10.192.121.97
+    - 10.192.121.98
 
     #资源池各个节点的磁盘列表
     device_info:
         #存储节点1的ip,如10.192.47.148（ip和cluster_create字段的public一致）
-      - node_ip: 10.192.121.66
+      - node_ip: 10.192.121.87
         #快速资源池需要填入磁盘类型为ssd
         device_list:
         - sda
         - sdb
-      - node_ip: 10.192.121.86
+        - sdc
+        - sdd
+      - node_ip: 10.192.121.97
         device_list:
         - sda
         - sdb
-      - node_ip: 10.192.121.87
+        - sdc
+        - sdd
+      - node_ip: 10.192.121.98
         device_list:
         - sda
         - sdb
+        - sdc
+        - sdd
   # 普通资源池的名字
   # - pool_name: pool2
   #   #资源池的描述,普通资源池类型选择‘normal’

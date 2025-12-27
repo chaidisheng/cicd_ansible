@@ -50,7 +50,7 @@
   ansible.builtin.shell: >
     sgdisk --zap-all --clear --mbrtogpt /dev/{{ item }}
   loop: "{{ pools[0].device_info[0].device_list }}"
-  ignore_errors: False
+  ignore_errors: True
 
 - name: Delete ceph installed flag
   ansible.builtin.file:

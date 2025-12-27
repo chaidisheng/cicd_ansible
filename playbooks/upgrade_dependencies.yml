@@ -14,4 +14,4 @@
       tags: [always]
     - role: upgrade_ceph_repository
   vars:
-    distro_name: "{{ (ansible_distribution.split(' ')[0] == 'openEuler') | ternary('HikOS', ansible_distribution.split(' ')[0]) }}"
+    distribution_name: "{{ (ansible_distribution.split(' ')[0] == 'openEuler') | ternary('HikOS', ansible_distribution.split(' ')[0]) }}"

@@ -2,8 +2,8 @@
 - name: choose dual pacific project tag
   ansible.builtin.set_fact:
     ceph_package_path: "{{ CICD_base_path }}/iDataCloud_UCP_dual_pacific"
-    publish_path: "{{ publish_path_for_dual_pacific }}"
-    ceph_package_backup_path: "/home{{ CICD_base_path }}/CICD/iDataCloud_UCP_dual_pacific"
+    publish_path: "{{ publish_path_base }}/{{ os_family }}_dual_pacific"
+    ceph_package_backup_path: "/home{{ CICD_base_path }}/CICD/iDataCloud_UCP_{{ os_family }}_dual_pacific"
   tags:
     - pacific
     - never
@@ -11,8 +11,8 @@
 - name: choose dual luminous project tag
   ansible.builtin.set_fact:
     ceph_package_path: '{{ CICD_base_path }}/iDataCloud_UCP_dual_luminous'
-    publish_path: "{{ publish_path_for_dual_luminous }}"
-    ceph_package_backup_path: "/home{{ CICD_base_path }}/CICD/iDataCloud_UCP_dual_luminous"
+    publish_path: "{{ publish_path_base }}/{{ os_family }}_dual_luminous"
+    ceph_package_backup_path: "/home{{ CICD_base_path }}/CICD/iDataCloud_UCP_{{ os_family }}_dual_luminous"
   tags:
     - luminous
     - never

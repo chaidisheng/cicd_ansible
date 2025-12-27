@@ -14,3 +14,12 @@
     - role: choose_project
     - role: rolling_update
       tags: [always]
+
+- hosts: localhost
+  any_errors_fatal: true
+  gather_facts: true
+  tasks:
+    - name: Auto cicd test
+      shell: > 
+        robot --variable distribution:{{ ansible_distribution.split(' ')[0] | lower }} . -d ./report
+  ignore_errors: yes

@@ -1,13 +1,5 @@
 - hosts: localhost
   gather_facts: false
-  tasks:
-    - name: Update ceph packages role
-      tags: [ never ]
-      ansible.builtin.copy:
-        src: '{{ playbook_dir }}/../scripts/ansible_package_role/pacific.yml'
-        dest: '{{ ceph_package_path }}/idatacloud-ceph/src/playbooks/roles/packeges/tasks/main.yml'
-        force: yes
-        mode: '0644'
   roles:
     - role: choose_project
     - role: upgrade_ceph_version

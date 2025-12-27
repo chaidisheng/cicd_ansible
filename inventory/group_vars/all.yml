@@ -31,12 +31,9 @@ publish_path_base: "/var/www/html/ceph"
 ## 提供给边缘云
 publish_path_for_Edge: "{{ publish_path_base }}/Edge"
 ## 提供给中心云和KOS
-publish_path_for_Center: "{{ publish_path_base }}"
-## 提供给国产化,由于这里的路径是国产化当时提供的路径,可能存在差异,暂不通过host_group合并
-#publish_path_for_dual_pacific: "{{ publish_path_base }}/openEuler_dual_pacific"
-#publish_path_for_dual_luminous: "{{ publish_path_base }}/openEuler_dual_luminous"
-publish_path_for_dual_pacific: "{{ publish_path_base }}/kylin_dual_pacific"
-#publish_path_for_dual_luminous: "{{ publish_path_base }}/kylin_dual_luminous"
+publish_path_for_Center: "{{ publish_path_base }}/"
+## 提供给国产化系统
+os_family: openEuler
 
 #部署节点信息
 user_hosts_ini_suffix: "hosts.ini"
